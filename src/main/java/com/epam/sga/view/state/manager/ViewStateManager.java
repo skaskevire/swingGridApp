@@ -1,22 +1,28 @@
-package com.epam.sga.view;
+package com.epam.sga.view.state.manager;
 
 import java.awt.event.ActionListener;
 import java.util.Map;
 
 import com.epam.sga.controller.entity.ActionResult;
+import com.epam.sga.view.state.ViewState;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-public class ViewStateManager {
-	@Inject
-	@Named("defaultView")
+public class ViewStateManager implements StateManager {
+
 	private ViewState currentState;
 
-	@Inject
-	@Named("statesAvailable")
 	private Map<String, ViewState> statesAvailable;
 
 	private ActionListener listener;
+
+	@Inject
+	public ViewStateManager(@Named("defaultView") ViewState currentState,
+			@Named("statesAvailable") Map<String, ViewState> statesAvailable) {
+		super();
+		this.currentState = currentState;
+		this.statesAvailable = statesAvailable;
+	}
 
 	public void setState(String name, ViewState state) {
 		statesAvailable.put(name, state);
@@ -30,10 +36,7 @@ public class ViewStateManager {
 			currentState = statesAvailable.get(result.getState());
 			currentState.applyActionResult(result);
 		}
-		if (listener != null) {
-			currentState.applyActionListener(listener);
-		}
-
+		currentState.applyActionListener(listener);
 		currentState.refresh();
 	}
 

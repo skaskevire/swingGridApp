@@ -6,21 +6,25 @@ import java.util.Map;
 
 import com.epam.sga.controller.action.BusinessFunction;
 import com.epam.sga.controller.entity.ActionResult;
-import com.epam.sga.view.ViewImpl;
-import com.epam.sga.view.ViewState;
 import com.epam.sga.view.entity.ViewData.ViewCar;
+import com.epam.sga.view.state.GridViewState;
+import com.epam.sga.view.state.ViewState;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 public class SortTableBF implements BusinessFunction {
 
+	private GridViewState view;
+
 	@Inject
-	@Named("defaultView")
-	private ViewState view;
+	public SortTableBF(@Named("defaultView") ViewState view) {
+		super();
+		this.view = (GridViewState) view;
+	}
 
 	@Override
 	public ActionResult doAction() {
-		((ViewImpl) view).getData().getCar().sort(new Comparator<ViewCar>() {
+		view.getData().getCar().sort(new Comparator<ViewCar>() {
 
 			@Override
 			public int compare(ViewCar o1, ViewCar o2) {
@@ -29,7 +33,7 @@ public class SortTableBF implements BusinessFunction {
 
 		});
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		dataMap.put("data", ((ViewImpl) view).getData());
+		dataMap.put("data", view.getData());
 		return new ActionResult("title", dataMap);
 	}
 

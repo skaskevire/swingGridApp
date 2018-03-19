@@ -1,4 +1,4 @@
-package com.epam.sga.view;
+package com.epam.sga.view.state;
 
 import java.awt.event.ActionListener;
 

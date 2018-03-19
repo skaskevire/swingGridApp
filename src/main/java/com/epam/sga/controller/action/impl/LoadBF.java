@@ -15,17 +15,20 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 public class LoadBF implements BusinessFunction {
-	@Inject
-	@Named("jaxbRelatedModel")
+
 	private Model model;
-
-	@Inject
-	@Named("dataConverter")
 	private Converter<Data, ViewData> dataConverter;
+	private Converter<Layout, ViewLayout> layoutConverter;
 
 	@Inject
-	@Named("layoutConverter")
-	private Converter<Layout, ViewLayout> layoutConverter;
+	public LoadBF(@Named("jaxbRelatedModel") Model model,
+			@Named("dataConverter") Converter<Data, ViewData> dataConverter,
+			@Named("layoutConverter") Converter<Layout, ViewLayout> layoutConverter) {
+		super();
+		this.model = model;
+		this.dataConverter = dataConverter;
+		this.layoutConverter = layoutConverter;
+	}
 
 	@Override
 	public ActionResult doAction() {

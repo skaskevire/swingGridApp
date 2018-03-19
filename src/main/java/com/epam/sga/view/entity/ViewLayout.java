@@ -38,7 +38,6 @@ public class ViewLayout {
 		public void addColumn(String column) {
 			columns.add(column);
 		}
-
 	}
 
 	public static class ViewMenu {
@@ -76,9 +75,7 @@ public class ViewLayout {
 			public void setImpl(String value) {
 				this.impl = value;
 			}
-
 		}
-
 	}
 
 }

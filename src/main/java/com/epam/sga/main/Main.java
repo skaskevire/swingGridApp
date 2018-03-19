@@ -11,7 +11,7 @@ import com.google.inject.Injector;
 public class Main {
 	// todo: apply i18n
 	// todo: enums, constants, clean code
-	public static void main(String[] args) throws JAXBException, FileNotFoundException {
+	public static void main(String[] args) throws JAXBException, FileNotFoundException {       
 		Injector injector = Guice.createInjector(new MainModule());
 		MainController mc = injector.getInstance(MainController.class);
 		mc.loadView();
