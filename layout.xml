@@ -1,0 +1,10 @@
+<layout>
+  <grid>
+    <column>Make</column>
+    <column>Model</column>
+    <column>Year</column>
+  </grid>
+  <menu>
+    <button impl="SortTableFunction">Sort table</button>
+  </menu>
+</layout>

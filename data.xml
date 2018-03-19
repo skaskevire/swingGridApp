@@ -1,0 +1,17 @@
+<data>
+<car>
+<make>Toyota</make>
+<model>RAV4</model>
+<year>2007</year>
+</car>
+<car>
+<make>Mercedes</make>
+<model>SLK</model>
+<year>2012</year>
+</car>
+<car>
+<make>Ford</make>
+<model>Escort</model>
+<year>2010</year>
+</car>
+</data>
