@@ -1,5 +1,11 @@
-package com.epam.sga.view.state.impl;
+package com.epam.sga.view.impl;
 
+import com.epam.sga.controller.Controller;
+import com.epam.sga.view.entity.BFEnum;
+import com.epam.sga.view.entity.ViewsEnum;
+import com.epam.sga.view.entity.ViewEntity;
+import com.epam.sga.view.View;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
@@ -7,36 +13,53 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.swing.JButton;
 
-import com.epam.sga.controller.entity.ActionResult;
 import com.epam.sga.view.entity.ViewData;
 import com.epam.sga.view.entity.ViewLayout;
 import com.epam.sga.view.entity.ViewData.ViewCar;
-import com.epam.sga.view.state.GridViewState;
 
 import static com.epam.sga.constants.Constants.*;
-public class GridViewStateImpl implements GridViewState {
+public class GridViewImpl implements View, ActionListener {
 	private ViewData data;
 	private GridWindow window;
-	
+	private Controller controller;
+
+
+	@Override
+	public void actionPerformed(ActionEvent action) {
+		switch (BFEnum.getByName(action.getActionCommand())) {
+			case LOAD:
+				controller.load();
+				break;
+			case SORT_GRID_BY_MAKE:
+				controller.sort(data);
+				break;
+			default:
+				throw new RuntimeException("Action not specified");
+		}
+	}
+
 	@Inject
-	public GridViewStateImpl(@Named("systemMessages")ResourceBundle messages) {
+	public GridViewImpl(@Named("systemMessages")ResourceBundle messages, @Named("mainController") Controller controller) {
 		window = new GridWindow(
 				messages.getString(WINDOW_HEADER_NAME_PROP),
 				GRID_WINDOW_MIN_WIDTH,
 				GRID_WINDOW_MIN_HEIGHT);
+		this.controller = controller;
 	}
 
 	@Override
-	public String getName() {
-		return "title";
+	public ViewsEnum getName() {
+		return ViewsEnum.TITLE;
 	}
 
 	@Override
-	public void applyActionResult(ActionResult result) {
-		if (result.getData("layout") != null) {
-			applyLayout(result.getData("layout"));
+	public void apply(ViewEntity viewEntity) {
+		if (viewEntity.getViewLayout() != null) {
+			applyLayout(viewEntity.getViewLayout());
 		}
-		applyData(result.getData("data"));
+		applyData(viewEntity.getViewData());
+		applyActionListener(this);
+		refresh();
 	}
 
 	private void applyData(ViewData data) {
@@ -60,8 +83,6 @@ public class GridViewStateImpl implements GridViewState {
 		window.putButtons(layout.getMenu().getButton());
 	}
 
-
-	@Override
 	public void applyActionListener(ActionListener listener) {
 		for (JButton button : window.getButtons().values()) {
 
@@ -76,7 +97,6 @@ public class GridViewStateImpl implements GridViewState {
 		}
 	}
 
-	@Override
 	public void refresh() {
 		window.setVisible(true);
 		window.repaint();
@@ -85,10 +105,5 @@ public class GridViewStateImpl implements GridViewState {
 	@Override
 	public void deactivate() {
 		window.setVisible(false);
-	}
-
-	@Override
-	public ViewData getData() {
-		return data;
 	}
 }

@@ -1,4 +1,4 @@
-package com.epam.sga.view.state.impl;
+package com.epam.sga.view.impl;
 
 import java.util.HashMap;
 import java.util.List;

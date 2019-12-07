@@ -1,4 +1,4 @@
-package com.epam.sga.controller.action;
+package com.epam.sga.view.entity;
 
 public enum BFEnum {
 	LOAD("load"), SORT_GRID_BY_MAKE("SortTableFunction");

@@ -1,15 +1,16 @@
 package com.epam.sga.main;
 
+import com.epam.sga.service.CarService;
+import com.epam.sga.service.impl.CarServiceImpl;
+import com.epam.sga.controller.Controller;
+import com.epam.sga.controller.CarController;
+import com.epam.sga.view.entity.ViewsEnum;
+import com.google.inject.Singleton;
+import com.google.inject.multibindings.MapBinder;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.epam.sga.constants.Constants;
-import com.epam.sga.controller.action.BFEnum;
-import com.epam.sga.controller.action.BusinessFunction;
-import com.epam.sga.controller.action.impl.LoadBF;
-import com.epam.sga.controller.action.impl.SortTableBF;
-import com.epam.sga.controller.action.invoker.BusinessFunctionInvoker;
-import com.epam.sga.controller.action.invoker.impl.InvokerImpl;
 import com.epam.sga.convert.Converter;
 import com.epam.sga.convert.DataConverter;
 import com.epam.sga.convert.LayoutConverter;
@@ -19,47 +20,41 @@ import com.epam.sga.model.entity.data.Data;
 import com.epam.sga.model.entity.layout.Layout;
 import com.epam.sga.view.entity.ViewData;
 import com.epam.sga.view.entity.ViewLayout;
-import com.epam.sga.view.state.ViewState;
-import com.epam.sga.view.state.impl.GridViewStateImpl;
-import com.epam.sga.view.state.manager.StateManager;
-import com.epam.sga.view.state.manager.ViewStateManager;
+import com.epam.sga.view.View;
+import com.epam.sga.view.impl.GridViewImpl;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 
-public class MainModule extends AbstractModule{
+public class MainModule extends AbstractModule {
 
-	@Override
-	protected void configure() {
-		ResourceBundle messages = ResourceBundle.getBundle("messages",
-				new Locale(Constants.USER_LANGUAGE, Constants.USER_COUNTRY));
-		bind(ResourceBundle.class).annotatedWith(Names.named("systemMessages")).toInstance(messages);
+  @Override
+  protected void configure() {
+    ResourceBundle messages = ResourceBundle.getBundle("messages",
+        new Locale(Constants.USER_LANGUAGE, Constants.USER_COUNTRY));
+    bind(ResourceBundle.class).annotatedWith(Names.named("systemMessages")).toInstance(messages);
 
-		bind(new TypeLiteral<Converter<Data, ViewData>>() {}).annotatedWith(Names.named("dataConverter")).toInstance(new DataConverter());
-		bind(new TypeLiteral<Converter<Layout, ViewLayout>>() {}).annotatedWith(Names.named("layoutConverter")).toInstance(new LayoutConverter());
-		bind(Model.class).annotatedWith(Names.named("jaxbRelatedModel")).toInstance(new JAXBRelatedModel());
+    bind(new TypeLiteral<Converter<Data, ViewData>>() {
+    }).annotatedWith(Names.named("dataConverter")).toInstance(new DataConverter());
+    bind(new TypeLiteral<Converter<Layout, ViewLayout>>() {
+    }).annotatedWith(Names.named("layoutConverter")).toInstance(new LayoutConverter());
+    bind(Model.class).annotatedWith(Names.named("jaxbRelatedModel"))
+        .toInstance(new JAXBRelatedModel());
+    bind(Controller.class).annotatedWith(Names.named("mainController")).to(
+        CarController.class);
+    bind(CarController.class).in(Singleton.class);
+    bind(CarService.class).annotatedWith(Names.named("carService")).to(
+        CarServiceImpl.class);
+    bind(CarServiceImpl.class).in(Singleton.class);
+    bind(View.class).to(GridViewImpl.class);
+    bind(GridViewImpl.class).in(Singleton.class);
 
-		
-		MapBinder<BFEnum, BusinessFunction> businessFunctionMap = MapBinder.newMapBinder(
-                  binder(), 
-                  BFEnum.class, 
-                  BusinessFunction.class, Names.named("businessFunctions"));
+    MapBinder<ViewsEnum, View> availavleViews = MapBinder.newMapBinder(
+        binder(),
+        ViewsEnum.class,
+        View.class, Names.named("availavleViews"));
 
-		businessFunctionMap.addBinding(BFEnum.LOAD).to(LoadBF.class);
-		businessFunctionMap.addBinding(BFEnum.SORT_GRID_BY_MAKE).to(SortTableBF.class);
-
-		 bind(BusinessFunctionInvoker.class).to(InvokerImpl.class);
-		 bind(StateManager.class).to(ViewStateManager.class);
-		 ViewState vi = new GridViewStateImpl(messages);
-		 bind(ViewState.class).annotatedWith(Names.named("defaultView")).toInstance(vi);
-		  MapBinder<String, ViewState> statesMap = MapBinder.newMapBinder(
-                  binder(), 
-                  String.class, 
-                  ViewState.class, Names.named("statesAvailable"));
-
-		  statesMap.addBinding(vi.getName()).toInstance(vi);
-		  
-	}
+    availavleViews.addBinding(ViewsEnum.TITLE).to(GridViewImpl.class);
+  }
 
 }
